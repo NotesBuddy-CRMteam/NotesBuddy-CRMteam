@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>XTIME Booking Contact Notes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Keep auth.js if you need authentication, otherwise remove the next line -->
+  <!-- <script defer src="auth.js"></script> -->
+</head>
+<body class="bg-gray-100 text-gray-800 p-4">
+  <!-- Nav Bar -->
+  <nav class="mb-3">
+    <div class="max-w-5xl mx-auto flex justify-between items-center bg-white border border-gray-200 rounded-xl py-3 px-6 shadow-sm">
+      <span class="italic font-bold text-[1.5rem] tracking-wide" style="color: #eb441a;">Notes Buddy</span>
+      <div class="flex gap-6 items-center">
+        <a href="psf-contact-notes.html" class="text-gray-700 font-medium hover:underline transition">PSF Contact Notes</a>
+        <a href="booking-contact-notes.html" class="text-gray-700 font-medium hover:underline transition">Booking Contact Notes</a>
+        <button onclick="logout()" class="ml-4 px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition font-medium">Logout</button>
+      </div>
+    </div>
+  </nav>
+  <div class="max-w-5xl mx-auto bg-white p-6 rounded-xl shadow space-y-6">
+    <h1 class="text-2xl font-bold text-center">XTIME Booking Contact Notes</h1>
+    <div class="flex flex-col md:flex-row gap-8 mt-6">
+      <!-- LEFT COLUMN -->
+      <div class="flex-1 space-y-8">
+        <!-- Gender & Mileage -->
+        <div class="space-y-4">
+          <div>
+            <label class="font-semibold block mb-2">Select Gender:</label>
+            <div class="flex gap-6">
+              <label class="flex items-center text-lg space-x-2">
+                <input type="radio" name="gender" value="he" checked class="w-5 h-5" onchange="updateMiscNotes()"> He
+              </label>
+              <label class="flex items-center text-lg space-x-2">
+                <input type="radio" name="gender" value="she" class="w-5 h-5" onchange="updateMiscNotes()"> She
+              </label>
+            </div>
+          </div>
+          <div>
+            <label class="font-semibold block mb-2">Current Mileage:</label>
+            <label class="flex items-center text-lg space-x-2">
+              <input type="checkbox" id="unknownMileage" class="w-5 h-5" checked>
+              Customer does not know their current mileage
+            </label>
+            <input type="text" id="mileageInput" placeholder="e.g. 45,000 km" class="mt-2 p-2 border rounded w-full">
+          </div>
+        </div>
+        <!-- Misc Notes -->
+        <div>
+          <h2 class="font-semibold mb-2">Misc Notes:</h2>
+          <div class="space-y-2">
+            <div class="flex items-start space-x-2"><button onclick="copyText('misc0')" class="text-sm text-blue-600 underline">Copy</button><span id="misc0">N/A</span></div>
+            <div class="flex items-start space-x-2"><button onclick="copyText('misc1')" class="text-sm text-blue-600 underline">Copy</button><span id="misc1">The customer was unable to be contacted after several attempts.</span></div>
+            <div class="flex items-start space-x-2"><button onclick="copyText('misc2')" class="text-sm text-blue-600 underline">Copy</button><span id="misc2">The customer was not willing to speak.</span></div>
+            <div class="flex items-start space-x-2"><button onclick="copyText('misc3')" class="text-sm text-blue-600 underline">Copy</button><span id="misc3">The customer was not interested in booking an appointment.</span></div>
+            <div class="flex items-start space-x-2"><button onclick="copyText('misc4')" class="text-sm text-blue-600 underline">Copy</button><span id="misc4">The customer advised that he no longer owned this vehicle.</span></div>
+            <div class="flex items-start space-x-2"><button onclick="copyText('misc5')" class="text-sm text-blue-600 underline">Copy</button><span id="misc5">The customer advised that he had his vehicle serviced elsewhere.</span></div>
+            <div class="flex items-start space-x-2">
+              <button onclick="copyText('misc6')" class="text-sm text-blue-600 underline">Copy</button>
+              <span id="misc6">***CALL BACK REQUEST*** The customer has requested a call-back at {{DATETIME}}</span>
+            </div>
+            <div class="flex items-start space-x-2">
+              <button onclick="copyText('misc7')" class="text-sm text-blue-600 underline">Copy</button>
+              <span id="misc7">The customer confirmed that the email address on file is correct.</span>
+            </div>
+          </div>
+        </div>
+        <!-- Action Banners -->
+        <div>
+          <h2 class="font-semibold mb-2">Action Banners:</h2>
+          <div class="space-y-2">
+            <div class="flex items-start space-x-2">
+              <button onclick="copyText('action1')" class="text-sm text-blue-600 underline">Copy</button>
+              <span id="action1">***ACTION REQUIRED - CUSTOMER REQUESTED A CALLBACK***</span>
+            </div>
+            <div class="flex items-start space-x-2">
+              <button onclick="copyText('action2')" class="text-sm text-blue-600 underline">Copy</button>
+              <span id="action2">***ACTION REQUIRED - CUSTOMER REQUESTED A LOAN VEHICLE***</span>
+            </div>
+            <div class="flex items-start space-x-2">
+              <button onclick="copyText('action3')" class="text-sm text-blue-600 underline">Copy</button>
+              <span id="action3">***ACTION REQUIRED - DEALERSHIP TO UPDATE RECORDS***</span>
+            </div>
+            <div class="flex items-start space-x-2">
+              <button onclick="copyText('action4')" class="text-sm text-blue-600 underline">Copy</button>
+              <span id="action4">***ACTION REQUIRED - CUSTOMER REQUESTED MORE INFORMATION***</span>
+            </div>
+            <div class="flex items-start space-x-2">
+              <button onclick="copyText('action5')" class="text-sm text-blue-600 underline">Copy</button>
+              <span id="action5">***ACTION REQUIRED - CUSTOMER REQUESTED A CALL BACK WITH A QUOTE***</span>
+            </div>
+            <div class="flex items-start space-x-2">
+              <button onclick="copyText('action6')" class="text-sm text-blue-600 underline">Copy</button>
+              <span id="action6">***ACTION REQUIRED - CUSTOMER REQUESTED TO BE UNSUBSCRIBED***</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- RIGHT COLUMN -->
+      <div class="flex-1 space-y-8">
+        <!-- Drop-off / Pick-up (side by side on desktop, stacked on mobile) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="font-semibold block mb-1 mt-4">Drop-Off Date:</label>
+            <input type="date" id="dropoffDate" class="p-2 border rounded w-full" onchange="syncPickupDate()">
+            <div class="mt-2">
+              <select id="dropoffTime" class="p-2 border rounded w-full" onchange="updateFinalNoteIfVisible()"></select>
+            </div>
+            <button onclick="copyDropoff()" class="mt-2 text-sm text-blue-600 underline">Copy Drop-Off Time</button>
+          </div>
+          <div>
+            <label class="font-semibold block mb-1 mt-4">Pick-Up Date:</label>
+            <input type="date" id="pickupDate" class="p-2 border rounded w-full" onchange="updateFinalNoteIfVisible()">
+            <div class="mt-2">
+              <select id="pickupTime" class="p-2 border rounded w-full" onchange="updateFinalNoteIfVisible()"></select>
+            </div>
+            <button onclick="copyPickup()" class="mt-2 text-sm text-blue-600 underline">Copy Pick-Up Time</button>
+          </div>
+        </div>
+        <!-- Confirmation Code -->
+        <div class="mt-4">
+          <label class="block font-semibold mb-1">Confirmation Code:</label>
+          <input type="text" id="confirmationCode" class="p-2 border rounded w-full" placeholder="e.g. ABC123" oninput="updateFinalNoteIfVisible()">
+        </div>
+        <!-- Final Booking Note -->
+        <div class="mt-6">
+          <button onclick="generateBookingNote()" class="px-4 py-2 bg-green-600 text-white rounded">Generate Booking Note</button>
+          <div id="finalNote" class="mt-4 bg-gray-100 p-3 border rounded whitespace-pre-wrap"></div>
+          <button onclick="copyText('finalNote')" class="mt-2 text-sm text-blue-600 underline">Copy Booking Note</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Place ALL JS here, right before </body> -->
+  <script>
+    // --- Define variables at the top ---
+    let lastDropoffDate = '';
+    window.satisfactionStatus = '';
+
+    // --- Logout function ---
+    function logout() {
+      window.location.href = "index.html";
+    }
+
+    // --- Helper for day suffix (1st, 2nd, 3rd, etc) ---
+    function getDaySuffix(day) {
+      if (day >= 11 && day <= 13) return 'th';
+      switch (day % 10) {
+        case 1:  return 'st';
+        case 2:  return 'nd';
+        case 3:  return 'rd';
+        default: return 'th';
+      }
+    }
+
+    // --- Format date/time string as: 11:00 am Wednesday 2nd July, 2025 ---
+    function formatDateTime(dateStr, timeStr) {
+      if(!dateStr || !timeStr) return '';
+      const [year, month, day] = dateStr.split('-').map(Number);
+      if(!year || !month || !day) return '';
+      let [hm, ampm] = timeStr.split(' ');
+      let [h, m] = hm.split(':').map(Number);
+      // Convert 12h to 24h just in case
+      if (ampm === "PM" && h !== 12) h += 12;
+      if (ampm === "AM" && h === 12) h = 0;
+      const dateObj = new Date(year, month - 1, day, h, m);
+      const weekday = dateObj.toLocaleDateString('en-AU', { weekday: 'long' });
+      const monthName = dateObj.toLocaleDateString('en-AU', { month: 'long' });
+      const dayNum = dateObj.getDate();
+      const suffix = getDaySuffix(dayNum);
+      const hour12 = (dateObj.getHours() % 12) || 12;
+      const minuteStr = dateObj.getMinutes().toString().padStart(2,'0');
+      const ampmStr = dateObj.getHours() >= 12 ? 'pm' : 'am';
+      return `${hour12}:${minuteStr} ${ampmStr} ${weekday} ${dayNum}${suffix} ${monthName}, ${year}`;
+    }
+
+    // --- Populate time dropdowns with 15-min intervals, 7:00 AM to 5:45 PM ---
+    function populateTimeOptions(selectId) {
+      const select = document.getElementById(selectId);
+      select.innerHTML = "";
+      const startHour = 7;
+      const endHour = 17;
+      for (let h = startHour; h <= endHour; h++) {
+        for (let m of [0, 15, 30, 45]) {
+          let hour12 = h % 12 === 0 ? 12 : h % 12;
+          let ampm = h < 12 ? "AM" : "PM";
+          let minStr = m.toString().padStart(2, "0");
+          let label = `${hour12}:${minStr} ${ampm}`;
+          let value = `${h.toString().padStart(2, "0")}:${minStr} ${ampm}`;
+          let opt = document.createElement("option");
+          opt.value = value;
+          opt.textContent = label;
+          select.appendChild(opt);
+        }
+      }
+    }
+
+    // --- Copy helpers ---
+    function copyText(id) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text);
+    }
+    function copyDropoff() {
+      const val = getDropoffDateTime();
+      if(val) navigator.clipboard.writeText(val);
+    }
+    function copyPickup() {
+      const val = getPickupDateTime();
+      if(val) navigator.clipboard.writeText(val);
+    }
+
+    // --- Getters for formatted dropoff/pickup datetime ---
+    function getDropoffDateTime() {
+      const date = document.getElementById('dropoffDate').value;
+      const time = document.getElementById('dropoffTime').value;
+      return formatDateTime(date, time);
+    }
+    function getPickupDateTime() {
+      const date = document.getElementById('pickupDate').value;
+      const time = document.getElementById('pickupTime').value;
+      return formatDateTime(date, time);
+    }
+
+    // --- Sync pickup date to dropoff date logic ---
+    function syncPickupDate() {
+      const dropoffDate = document.getElementById('dropoffDate').value;
+      if(dropoffDate) {
+        const pickupDateInput = document.getElementById('pickupDate');
+        if(!pickupDateInput.value || pickupDateInput.value === lastDropoffDate) {
+          pickupDateInput.value = dropoffDate;
+        }
+        lastDropoffDate = dropoffDate;
+        updateFinalNoteIfVisible();
+      }
+    }
+
+    // --- Gender & Misc notes ---
+    function getGender() {
+      return document.querySelector('input[name="gender"]:checked').value;
+    }
+    function getPossessive(gender) {
+      return gender === "he" ? "his" : "her";
+    }
+    function capitalize(word) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    }
+    function updateMiscNotes() {
+      const gender = getGender();
+      const hisHer = getPossessive(gender);
+      document.getElementById("misc4").innerText = `The customer advised that ${gender} no longer owned this vehicle.`;
+      document.getElementById("misc5").innerText = `The customer advised that ${gender} had ${hisHer} vehicle serviced elsewhere.`;
+    }
+
+    // --- Mileage survey logic ---
+    function handleMileageInput() {
+      const mileageInput = document.getElementById('mileageInput');
+      const unknownMileage = document.getElementById('unknownMileage');
+      if (mileageInput.value.trim() !== "") {
+        unknownMileage.checked = false;
+      } else {
+        unknownMileage.checked = true;
+      }
+    }
+    function handleUnknownMileageClick() {
+      const mileageInput = document.getElementById('mileageInput');
+      const unknownMileage = document.getElementById('unknownMileage');
+      if (unknownMileage.checked) {
+        mileageInput.value = "";
+      }
+    }
+
+    // --- Generate booking note ---
+    function generateBookingNote() {
+      const gender = getGender();
+      const hisHer = getPossessive(gender);
+      const dropoff = getDropoffDateTime() || "[Drop-Off Date & Time]";
+      const pickup = getPickupDateTime() || "[Pick-Up Date & Time]";
+      const code = document.getElementById("confirmationCode").value.trim() || "{{CODE}}";
+      const unknownMileage = document.getElementById("unknownMileage").checked;
+      const kmsRaw = document.getElementById("mileageInput").value.trim();
+      const kms = unknownMileage ? "not able to be confirmed" : (kmsRaw || "{{KILOMETRES}}");
+      const note = "***BOOKING MADE***\n" + 
+        `The customer made a booking for ${dropoff}. ${capitalize(gender)} would like to collect the vehicle by ${pickup}. The current odometer reading is ${kms}. The booking has been processed on XTIME and the confirmation code is ${code}.
+${window.satisfactionStatus ? "Satisfaction Status: " + window.satisfactionStatus + "." : ""}`.trim();
+      const finalNoteEl = document.getElementById("finalNote");
+      finalNoteEl.textContent = note;
+      navigator.clipboard.writeText(note);
+    }
+
+    // --- Update note if visible ---
+    function updateFinalNoteIfVisible() {
+      if(document.getElementById("finalNote").textContent.trim()) {
+        generateBookingNote();
+      }
+    }
+
+    // --- Initialization ---
+    function init() {
+      // -- Populate dropdowns --
+      populateTimeOptions("dropoffTime");
+      populateTimeOptions("pickupTime");
+
+      // -- Set default date and time --
+      const todayStr = new Date().toISOString().slice(0,10);
+      document.getElementById('dropoffDate').value = todayStr;
+      document.getElementById('pickupDate').value = todayStr;
+      lastDropoffDate = todayStr;
+
+      // -- Set default time (robust) --
+      const dropoffTime = document.getElementById('dropoffTime');
+      const pickupTime = document.getElementById('pickupTime');
+      if (dropoffTime && pickupTime) {
+        // find 09:00 AM option robustly
+        for (let option of dropoffTime.options) {
+          if (option.value === '09:00 AM') {
+            dropoffTime.value = option.value;
+            break;
+          }
+        }
+        for (let option of pickupTime.options) {
+          if (option.value === '09:00 AM') {
+            pickupTime.value = option.value;
+            break;
+          }
+        }
+      }
+
+      updateMiscNotes();
+
+      // -- Attach event listeners for mileage survey --
+      document.getElementById('mileageInput').addEventListener('input', handleMileageInput);
+      document.getElementById('unknownMileage').addEventListener('change', handleUnknownMileageClick);
+    }
+
+    // Run script after DOM is loaded (because script is at end of body)
+    init();
+  </script>
+</body>
+</html>

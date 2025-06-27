@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Notes Buddy - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="auth.js"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white max-w-md w-full p-8 rounded-xl shadow space-y-6">
+    <h1 class="text-2xl font-bold text-center mb-4" style="color: #eb441a;">Notes Buddy</h1>
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label for="passkey" class="block font-semibold mb-2">Enter Passkey:</label>
+        <input type="password" id="passkey" class="w-full border rounded p-2" required autocomplete="off">
+      </div>
+      <button class="w-full bg-orange-600 text-white py-2 rounded font-semibold hover:bg-orange-700 transition" type="submit">Login</button>
+      <div id="error" class="text-red-600 text-center mt-2"></div>
+    </form>
+  </div>
+  <script>
+    document.getElementById("loginForm").onsubmit = function(e){
+      e.preventDefault();
+      const passkey = document.getElementById("passkey").value.trim();
+      if (passkey === "irwin") {
+        setAuth();
+        window.location.href = "index.html";
+      } else {
+        document.getElementById("error").textContent = "Invalid passkey.";
+      }
+    }
+    // If already authenticated, redirect to index.html
+    if (localStorage.getItem("notesbuddy_auth")) {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
