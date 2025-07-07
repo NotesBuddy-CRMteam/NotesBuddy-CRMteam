@@ -152,7 +152,7 @@
       const hisHer = getPossessive(gender);
       const emailSurvey = document.getElementById("emailSurvey").checked;
 
-      let note = `The customer advised that ${gender} was ${status} with ${hisHer} service experience {{REASON}}. ${capitalize(gender)} has confirmed that the email address on file is correct.`;
+      let note = `The customer advised that ${gender} was ${status} with ${hisHer} service experience. ${capitalize(gender)} has confirmed that the email address on file is correct.`;
 
       if (status === "satisfied" && emailSurvey) {
         note += " The customer was notified about the email survey.";
