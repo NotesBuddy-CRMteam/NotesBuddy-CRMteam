@@ -173,7 +173,7 @@
       const suffix = getDaySuffix(dayNum);
       const hour12 = (dateObj.getHours() % 12) || 12;
       const minuteStr = dateObj.getMinutes().toString().padStart(2,'0');
-      const ampmStr = dateObj.getHours() >= 12 ? 'pm' : 'am';
+      const ampmStr = ampm.toLowerCase(); // Use the AM/PM from the dropdown value!
       return `${hour12}:${minuteStr} ${ampmStr} ${weekday} ${dayNum}${suffix} ${monthName}, ${year}`;
     }
 
