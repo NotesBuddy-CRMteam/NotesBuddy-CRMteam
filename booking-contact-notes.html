@@ -161,50 +161,33 @@ function getDaySuffix(day) {
     // --- Format date/time string as: 11:00 am Wednesday 2nd July, 2025 ---
 function formatDateTime(dateStr, timeStr) {
   if (!dateStr || !timeStr) return '';
+  // Parse date parts as numbers
   const [year, month, day] = dateStr.split('-').map(Number);
   if (!year || !month || !day) return '';
-  let [hm, ampm] = timeStr.split(' ');
-  let [h, m] = hm.split(':').map(Number);
-  // Convert 12h to 24h just in case
-  if (ampm === "PM" && h !== 12) h += 12;
-  if (ampm === "AM" && h === 12) h = 0;
-
-  // Get weekday using UTC midnight (no time)
-  const weekdayDate = new Date(Date.UTC(year, month - 1, day));
+  // Get weekday from a date object created at midnight local time (no time, so no rollover)
   const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
-  const weekday = weekdays[weekdayDate.getUTCDay()];
-  const monthName = months[month - 1]; // Use the input month, not from Date object
+  // Make a date with just year, month, day (local time, ignore time zone headaches)
+  const dateObj = new Date(year, month - 1, day);
+  const weekday = weekdays[dateObj.getDay()];
+  const monthName = months[month - 1];
   const suffix = getDaySuffix(day);
+
+  // Now handle time display
+  let [hm, ampm] = timeStr.split(' ');
+  let [h, m] = hm.split(':').map(Number);
+  // Use the time as selected, not from the Date object
   const hour12 = (h % 12 === 0 ? 12 : h % 12);
   const minuteStr = m.toString().padStart(2,'0');
   const ampmStr = ampm.toLowerCase();
+
   return `${hour12}:${minuteStr} ${ampmStr} ${weekday} ${day}${suffix} ${monthName}, ${year}`;
 }
 
-    // --- Populate time dropdowns with 15-min intervals, 7:00 AM to 5:45 PM ---
-    function populateTimeOptions(selectId) {
-      const select = document.getElementById(selectId);
-      select.innerHTML = "";
-      const startHour = 7;
-      const endHour = 17;
-      for (let h = startHour; h <= endHour; h++) {
-        for (let m of [0, 15, 30, 45]) {
-          let hour12 = h % 12 === 0 ? 12 : h % 12;
-          let ampm = h < 12 ? "AM" : "PM";
-          let minStr = m.toString().padStart(2, "0");
-          let label = `${hour12}:${minStr} ${ampm}`;
-          let value = `${h.toString().padStart(2, "0")}:${minStr} ${ampm}`;
-          let opt = document.createElement("option");
-          opt.value = value;
-          opt.textContent = label;
-          select.appendChild(opt);
-        }
-      }
-    }
+    
 
     // --- Copy helpers ---
     function copyText(id) {
