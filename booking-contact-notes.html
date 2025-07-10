@@ -159,25 +159,26 @@
     }
 
     // --- Format date/time string as: 11:00 am Wednesday 2nd July, 2025 ---
-    function formatDateTime(dateStr, timeStr) {
-      if(!dateStr || !timeStr) return '';
-      const [year, month, day] = dateStr.split('-').map(Number);
-      if(!year || !month || !day) return '';
-      let [hm, ampm] = timeStr.split(' ');
-      let [h, m] = hm.split(':').map(Number);
-      // Convert 12h to 24h just in case
-      if (ampm === "PM" && h !== 12) h += 12;
-      if (ampm === "AM" && h === 12) h = 0;
-      const dateObj = new Date(year, month - 1, day, h, m);
-      const weekday = dateObj.toLocaleDateString('en-AU', { weekday: 'long' });
-      const monthName = dateObj.toLocaleDateString('en-AU', { month: 'long' });
-      const dayNum = dateObj.getDate();
-      const suffix = getDaySuffix(dayNum);
-      const hour12 = (dateObj.getHours() % 12) || 12;
-      const minuteStr = dateObj.getMinutes().toString().padStart(2,'0');
-      const ampmStr = ampm.toLowerCase(); // Use the AM/PM from the dropdown value!
-      return `${hour12}:${minuteStr} ${ampmStr} ${weekday} ${dayNum}${suffix} ${monthName}, ${year}`;
-    }
+function formatDateTime(dateStr, timeStr) {
+  if(!dateStr || !timeStr) return '';
+  const [year, month, day] = dateStr.split('-').map(Number);
+  if(!year || !month || !day) return '';
+  let [hm, ampm] = timeStr.split(' ');
+  let [h, m] = hm.split(':').map(Number);
+  // Convert 12h to 24h just in case
+  if (ampm === "PM" && h !== 12) h += 12;
+  if (ampm === "AM" && h === 12) h = 0;
+  // Use the input date directly, not .getDate() from JS Date
+  const dateObj = new Date(year, month - 1, day, h, m);
+  const weekday = dateObj.toLocaleDateString('en-AU', { weekday: 'long' });
+  const monthName = dateObj.toLocaleDateString('en-AU', { month: 'long' });
+  // Use the input day, not dateObj.getDate()
+  const suffix = getDaySuffix(day);
+  const hour12 = (h % 12 === 0 ? 12 : h % 12);
+  const minuteStr = m.toString().padStart(2,'0');
+  const ampmStr = ampm.toLowerCase();
+  return `${hour12}:${minuteStr} ${ampmStr} ${weekday} ${day}${suffix} ${monthName}, ${year}`;
+}
 
     // --- Populate time dropdowns with 15-min intervals, 7:00 AM to 5:45 PM ---
     function populateTimeOptions(selectId) {
