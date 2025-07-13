@@ -5,8 +5,6 @@
   <title>XTIME Booking Contact Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Keep auth.js if you need authentication, otherwise remove the next line -->
-  <!-- <script defer src="auth.js"></script> -->
 </head>
 <body class="bg-gray-100 text-gray-800 p-4">
   <!-- Nav Bar -->
@@ -102,7 +100,7 @@
       </div>
       <!-- RIGHT COLUMN -->
       <div class="flex-1 space-y-8">
-        <!-- Drop-off / Pick-up (side by side on desktop, stacked on mobile) -->
+        <!-- Drop-off / Pick-up -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label class="font-semibold block mb-1 mt-4">Drop-Off Date:</label>
@@ -135,61 +133,73 @@
       </div>
     </div>
   </div>
-
-  <!-- Place ALL JS here, right before </body> -->
   <script>
-    // --- Define variables at the top ---
     let lastDropoffDate = '';
     window.satisfactionStatus = '';
 
-    // --- Logout function ---
     function Return() {
       window.location.href = "index.html";
     }
 
-    // --- Helper for day suffix (1st, 2nd, 3rd, etc) ---
-function getDaySuffix(day) {
-  if (day >= 11 && day <= 13) return 'th';
-  switch (day % 10) {
-    case 1:  return 'st';
-    case 2:  return 'nd';
-    case 3:  return 'rd';
-    default: return 'th';
-  }
-}
+    // Helper for day suffix
+    function getDaySuffix(day) {
+      if (day >= 11 && day <= 13) return 'th';
+      switch (day % 10) {
+        case 1:  return 'st';
+        case 2:  return 'nd';
+        case 3:  return 'rd';
+        default: return 'th';
+      }
+    }
 
-    // --- Format date/time string as: 11:00 am Wednesday 2nd July, 2025 ---
-function formatDateTime(dateStr, timeStr) {
-  if (!dateStr || !timeStr) return '';
-  // Parse date parts as numbers
-  const [year, month, day] = dateStr.split('-').map(Number);
-  if (!year || !month || !day) return '';
-  // Get weekday from a date object created at midnight local time (no time, so no rollover)
-  const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-  // Make a date with just year, month, day (local time, ignore time zone headaches)
-  const dateObj = new Date(year, month - 1, day);
-  const weekday = weekdays[dateObj.getDay()];
-  const monthName = months[month - 1];
-  const suffix = getDaySuffix(day);
+    // Bulletproof date/time formatter (never broken by timezone)
+    function formatDateTime(dateStr, timeStr) {
+      if (!dateStr || !timeStr) return '';
+      // Parse date parts as numbers
+      const [year, month, day] = dateStr.split('-').map(Number);
+      if (!year || !month || !day) return '';
+      const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      // Make a date with just year, month, day (local time)
+      const dateObj = new Date(year, month - 1, day);
+      const weekday = weekdays[dateObj.getDay()];
+      const monthName = months[month - 1];
+      const suffix = getDaySuffix(day);
 
-  // Now handle time display
-  let [hm, ampm] = timeStr.split(' ');
-  let [h, m] = hm.split(':').map(Number);
-  // Use the time as selected, not from the Date object
-  const hour12 = (h % 12 === 0 ? 12 : h % 12);
-  const minuteStr = m.toString().padStart(2,'0');
-  const ampmStr = ampm.toLowerCase();
+      // Now handle time display
+      let [hm, ampm] = timeStr.split(' ');
+      let [h, m] = hm.split(':').map(Number);
+      // Use the time as selected, not from the Date object
+      const hour12 = (h % 12 === 0 ? 12 : h % 12);
+      const minuteStr = m.toString().padStart(2,'0');
+      const ampmStr = ampm.toLowerCase();
 
-  return `${hour12}:${minuteStr} ${ampmStr} ${weekday} ${day}${suffix} ${monthName}, ${year}`;
-}
+      return `${hour12}:${minuteStr} ${ampmStr} ${weekday} ${day}${suffix} ${monthName}, ${year}`;
+    }
 
-    
+    function populateTimeOptions(selectId) {
+      const select = document.getElementById(selectId);
+      select.innerHTML = "";
+      const startHour = 7;
+      const endHour = 17;
+      for (let h = startHour; h <= endHour; h++) {
+        for (let m of [0, 15, 30, 45]) {
+          let hour12 = h % 12 === 0 ? 12 : h % 12;
+          let ampm = h < 12 ? "AM" : "PM";
+          let minStr = m.toString().padStart(2, "0");
+          let label = `${hour12}:${minStr} ${ampm}`;
+          let value = label;
+          let opt = document.createElement("option");
+          opt.value = value;
+          opt.textContent = label;
+          select.appendChild(opt);
+        }
+      }
+    }
 
-    // --- Copy helpers ---
     function copyText(id) {
       const text = document.getElementById(id).innerText;
       navigator.clipboard.writeText(text);
@@ -203,7 +213,6 @@ function formatDateTime(dateStr, timeStr) {
       if(val) navigator.clipboard.writeText(val);
     }
 
-    // --- Getters for formatted dropoff/pickup datetime ---
     function getDropoffDateTime() {
       const date = document.getElementById('dropoffDate').value;
       const time = document.getElementById('dropoffTime').value;
@@ -215,7 +224,6 @@ function formatDateTime(dateStr, timeStr) {
       return formatDateTime(date, time);
     }
 
-    // --- Sync pickup date to dropoff date logic ---
     function syncPickupDate() {
       const dropoffDate = document.getElementById('dropoffDate').value;
       if(dropoffDate) {
@@ -228,7 +236,6 @@ function formatDateTime(dateStr, timeStr) {
       }
     }
 
-    // --- Gender & Misc notes ---
     function getGender() {
       return document.querySelector('input[name="gender"]:checked').value;
     }
@@ -245,11 +252,8 @@ function formatDateTime(dateStr, timeStr) {
       document.getElementById("misc5").innerText = `The customer advised that ${gender} had ${hisHer} vehicle serviced elsewhere.`;
       document.getElementById("misca").innerText = `The customer advised that ${gender} will contact the dealership when ${gender} is ready to make a booking.`;
       document.getElementById("miscb").innerText = `The customer advised that ${gender} will not be returning to this dealership because ${gender} has moved away.`;
-
-  
     }
 
-    // --- Mileage survey logic ---
     function handleMileageInput() {
       const mileageInput = document.getElementById('mileageInput');
       const unknownMileage = document.getElementById('unknownMileage');
@@ -267,7 +271,6 @@ function formatDateTime(dateStr, timeStr) {
       }
     }
 
-    // --- Generate booking note ---
     function generateBookingNote() {
       const gender = getGender();
       const hisHer = getPossessive(gender);
@@ -285,52 +288,30 @@ ${window.satisfactionStatus ? "Satisfaction Status: " + window.satisfactionStatu
       navigator.clipboard.writeText(note);
     }
 
-    // --- Update note if visible ---
     function updateFinalNoteIfVisible() {
       if(document.getElementById("finalNote").textContent.trim()) {
         generateBookingNote();
       }
     }
 
-    // --- Initialization ---
     function init() {
-      // -- Populate dropdowns --
       populateTimeOptions("dropoffTime");
       populateTimeOptions("pickupTime");
 
-      // -- Set default date and time --
+      // Set default date and time
       const todayStr = new Date().toISOString().slice(0,10);
       document.getElementById('dropoffDate').value = todayStr;
       document.getElementById('pickupDate').value = todayStr;
       lastDropoffDate = todayStr;
 
-      // -- Set default time (robust) --
-      const dropoffTime = document.getElementById('dropoffTime');
-      const pickupTime = document.getElementById('pickupTime');
-      if (dropoffTime && pickupTime) {
-        // find 09:00 AM option robustly
-        for (let option of dropoffTime.options) {
-          if (option.value === '09:00 AM') {
-            dropoffTime.value = option.value;
-            break;
-          }
-        }
-        for (let option of pickupTime.options) {
-          if (option.value === '09:00 AM') {
-            pickupTime.value = option.value;
-            break;
-          }
-        }
-      }
+      // Set default times (use same label as option value)
+      document.getElementById('dropoffTime').value = "9:00 AM";
+      document.getElementById('pickupTime').value = "9:00 AM";
 
       updateMiscNotes();
-
-      // -- Attach event listeners for mileage survey --
       document.getElementById('mileageInput').addEventListener('input', handleMileageInput);
       document.getElementById('unknownMileage').addEventListener('change', handleUnknownMileageClick);
     }
-
-    // Run script after DOM is loaded (because script is at end of body)
     init();
   </script>
 </body>
